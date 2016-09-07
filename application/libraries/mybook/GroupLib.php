@@ -1,5 +1,5 @@
 <?php
-class CategoriesLib{
+class GroupLib{
     
     public $objCi;
     
@@ -7,17 +7,17 @@ class CategoriesLib{
         $this->objCi = & get_instance();
     }
 
-    public function saveCategory($objCategory){
+    public function saveGroup($objGroup){
         $this->objCi->load->database();
         $this->objCi->db->trans_begin();
         
         try{
             
-            foreach($objCategory as $objData){
-                $strQuery = "select count(*) as count from categories where chr_type = '$objData->type' and 
+            foreach($objGroup as $objData){
+                $strQuery = "select count(*) as count from groups where chr_type = '$objData->type' and 
                              bln_deleted is null and vchr_name = ? ";
                 if($objData->id != ""){
-                    $strQuery .= " and pk_categorie_id != ".$objData->id;
+                    $strQuery .= " and pk_group_id != ".$objData->id;
                 }
                 $objResult = $this->objCi->db->query($strQuery, array($objData->name))->row();
 //                die($this->objCi->db->last_query());
@@ -25,14 +25,14 @@ class CategoriesLib{
                     return "DUPLICATE";
                 }
                 
-                $arrCategory = array(
-                    "pk_categorie_id" => $objData->id,
+                $arrGroup = array(
+                    "pk_group_id" => $objData->id,
                     "vchr_name" => $objData->name,
                     "chr_type" => $objData->type,
                     "bln_deleted" => null,
                 );
                 
-                $this->objCi->db->replace('categories', $arrCategory);
+                $this->objCi->db->replace('groups', $arrGroup);
             }
             
             $this->objCi->db->trans_commit();
@@ -44,31 +44,30 @@ class CategoriesLib{
         }
         
         return $strMessage;
-        
     }
     
-    public function getCategory($strMode = "C"){
+    public function getGroup($strMode = "G"){
         $this->objCi->load->database();
-        $strQuery = "select * from categories where chr_type = '$strMode' and bln_deleted is null order by vchr_name";
+        $strQuery = "select * from groups where chr_type = '$strMode' and bln_deleted is null order by vchr_name";
         $objResult = $this->objCi->db->query($strQuery);
         
-        $arrCategories = array();
+        $arrGroup = array();
         foreach ($objResult->result() as $objRow){
-            $arrCategories[] = array(
-                "id" => $objRow->pk_categorie_id,
+            $arrGroup[] = array(
+                "id" => $objRow->pk_group_id,
                 "name" => $objRow->vchr_name,
                 "type" => $objRow->chr_type,
             );
         }
         
-        return $arrCategories;
+        return $arrGroup;
         
     }
     
-    public function deleteCategory($intCategoryId){
+    public function deleteGroup($intGroupId){
         $this->objCi->load->database();
-//        $this->objCi->db->delete('categories', "pk_categorie_id = 7");
-        $Result = $this->objCi->db->update('categories', array("bln_deleted" => 1),"pk_categorie_id = $intCategoryId");
+//        $this->objCi->db->delete('groups', "pk_group_id = $intGroupId");
+        $Result = $this->objCi->db->update('groups', array("bln_deleted" => 1),"pk_group_id = $intGroupId");
         $strMessage = "SUCCESS";
         return $strMessage;
     }

@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/sweetalert2/4.2.6/sweetalert2.min.js"></script>
     <script>
+        strBaseUrl = "<?php echo $arrBaseUrl; ?>"
         <?php
-            require_once dirname(dirname(__DIR__))."\\mybook\\template\\mybook.js";
+            require_once dirname(dirname(__DIR__))."/mybook/template/mybook.js";
         ?>
     </script>
     <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/sweetalert2/4.2.6/sweetalert2.min.css" rel="stylesheet" type="text/css">
     
     <style>
         
@@ -107,33 +110,19 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                      <td>@mdo</td>
-                      <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                      <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                      <td>@fat</td>
-                      <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                      <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Larry</td>
-                      <td>the Bird</td>
-                      <td>@twitter</td>
-                      <td>@twitter</td>
-                      <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                      <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                    </tr>
+                      <?php
+                        foreach($arrBookMark as $intKey => $arrData){
+                            echo "<tr bookmark='{$arrData["id"]}'>
+                                      <td>".($intKey+1)."</td>
+                                      <td url='{$arrData["url"]}' class='goToUrl'>{$arrData["name"]}</td>
+                                      <td>{$arrData["category_name"]}</td>
+                                      <td>{$arrData["subcategory_name"]}</td>
+                                      <td>{$arrData["description"]}</td>
+                                      <td><a><i class='fa fa-pencil fa-fw pointer deleteBookmark'></i></a></td>
+                                      <td><a><i class='fa fa-trash fa-fw pointer' editBookmark></i></a></td>
+                                    </tr>";
+                        }
+                      ?>
                   </tbody>
                 </table>
                   
@@ -198,33 +187,18 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>Mark</td>
-                          <td>Otto</td>
-                          <td>@mdo</td>
-                          <!--<td>@mdo</td>-->
-                          <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                          <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>Jacob</td>
-                          <td>Thornton</td>
-                          <td>@fat</td>
-                          <!--<td>@fat</td>-->
-                          <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                          <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td>Larry</td>
-                          <td>the Bird</td>
-                          <td>@twitter</td>
-                          <!--<td>@twitter</td>-->
-                          <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                          <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                        </tr>
+                          <?php
+                            foreach($arrNote as $intKey => $arrData){
+                                echo "<tr note='{$arrData["id"]}'>
+                                          <td>".($intKey+1)."</td>
+                                          <td>{$arrData["name"]}</td>
+                                          <td>{$arrData["category_name"]}</td>
+                                          <td>{$arrData["subcategory_name"]}</td>
+                                          <td><a><i class='fa fa-pencil fa-fw pointer deleteNote'></i></a></td>
+                                          <td><a><i class='fa fa-trash fa-fw pointer' editNote></i></a></td>
+                                        </tr>";
+                            }
+                          ?>
                       </tbody>
                     </table>
                       
@@ -306,8 +280,8 @@
                             <select class="form-control" id="searchCategory">
                                 <option value=""></option>
                                 <?php
-                                    foreach($arrCategories as $arrCategory){
-                                        echo "<option value='{$arrCategory["id"]}'>{$arrCategory["name"]}</option>";
+                                    foreach($arrGroups as $arrGroup){
+                                        echo "<option value='{$arrGroup["id"]}'>{$arrGroup["name"]}</option>";
                                     }
                                 ?>
                             </select>
@@ -319,8 +293,8 @@
                             <select class="form-control" id="searchSubCategory">
                                 <option value=""></option>
                                 <?php
-                                    foreach($arrSubCategories as $arrSubCategory){
-                                        echo "<option value='{$arrSubCategory["id"]}'>{$arrSubCategory["name"]}</option>";
+                                    foreach($arrSubGroups as $arrSubGroup){
+                                        echo "<option value='{$arrSubGroup["id"]}'>{$arrSubGroup["name"]}</option>";
                                     }
                                 ?>
                             </select>
@@ -347,39 +321,21 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>Mark</td>
-                          <td>Otto</td>
-                          <td>@mdo</td>
-                          <td>@mdo</td>
-                          <td>@mdo</td>
-                          <td>@mdo</td>
-                          <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                          <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>Jacob</td>
-                          <td>Thornton</td>
-                          <td>@fat</td>
-                          <td>@fat</td>
-                          <td>@fat</td>
-                          <td>@fat</td>
-                          <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                          <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td>Larry</td>
-                          <td>the Bird</td>
-                          <td>@twitter</td>
-                          <td>@twitter</td>
-                          <td>@twitter</td>
-                          <td>@twitter</td>
-                          <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                          <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                        </tr>
+                          <?php
+                            foreach($arrPhoneBook as $intKey => $arrData){
+                                echo "<tr phonebook='{$arrData["id"]}'>
+                                          <td>".($intKey+1)."</td>
+                                          <td>{$arrData["name"]}</td>
+                                          <td>{$arrData["phone"]}</td>
+                                          <td>{$arrData["mobile"]}</td>
+                                          <td>{$arrData["email"]}</td>
+                                          <td>{$arrData["fax"]}</td>
+                                          <td>{$arrData["description"]}</td>
+                                          <td><a><i class='fa fa-pencil fa-fw pointer deletePhoneBook'></i></a></td>
+                                          <td><a><i class='fa fa-trash fa-fw pointer' editPhoneBook></i></a></td>
+                                        </tr>";
+                            }
+                          ?>
                       </tbody>
                     </table>
                       
@@ -533,9 +489,7 @@
                       </div>
                       <div class="col-md-10">
                           
-                          <div class="alert alert-dismissable alert-success AddTabMessage">
-                              <strong>Well done!</strong>You successfully read this important alert message.
-                          </div>
+                          <div class="alert alert-dismissable alert-success AddTabMessage" style="display: none"></div>
                           
                           <!--*** Add Book Mark ***-->
                           <div class="addTabOptions" id="AddBookMark">
@@ -547,28 +501,28 @@
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Name</label>
+                                  <label for="txtBookmarkName" class="control-label">Name</label>
                                 </div>
                                 <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="inputEmail3" placeholder="Name">
+                                  <input type="text" class="form-control" id="txtBookmarkName" placeholder="Name">
                                 </div>
                               </div>
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">URL</label>
+                                  <label for="txtBookmarkUrl" class="control-label">URL</label>
                                 </div>
                                 <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="inputEmail3" placeholder="URL">
+                                  <input type="text" class="form-control" id="txtBookmarkUrl" placeholder="URL">
                                 </div>
                               </div>
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Category</label>
+                                  <label for="cmbBookmarkCategory" class="control-label">Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="inputEmail3">
+                                    <select class="form-control" id="cmbBookmarkCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrCategories as $arrCategory){
@@ -581,10 +535,10 @@
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Sub Category</label>
+                                  <label for="cmbBookmarkSubCategory" class="control-label">Sub Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="inputEmail3">
+                                    <select class="form-control" id="cmbBookmarkSubCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrSubCategories as $arrSubCategory){
@@ -597,16 +551,16 @@
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Description</label>
+                                  <label for="txtBookmarkDescri" class="control-label">Description</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" id="inputEmail3" placeholder="Description"></textarea>
+                                    <textarea class="form-control" id="txtBookmarkDescri" placeholder="Description"></textarea>
                                 </div>
                               </div>
 
                               <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="button" class="btn btn-primary btnResetAddTab" mode="AddBookMark">Reset</button>
+                                    <button type="button" class="btn btn-primary" id="btnResetBookMark" mode="AddBookMark">Reset</button>
                                     <button type="button" class="btn btn-primary" id="btnSaveBookMark">Save</button>
                                 </div>
                               </div>
@@ -626,19 +580,19 @@
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Name</label>
+                                  <label for="txtNoteName" class="control-label">Name</label>
                                 </div>
                                 <div class="col-sm-10">
-                                  <input type="text" class="form-control" id="inputEmail3" placeholder="Name">
+                                  <input type="text" class="form-control" id="txtNoteName" placeholder="Name">
                                 </div>
                               </div>
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Category</label>
+                                  <label for="cmbNoteCategory" class="control-label">Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="inputEmail3">
+                                    <select class="form-control" id="cmbNoteCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrCategories as $arrCategory){
@@ -651,10 +605,10 @@
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Sub Category</label>
+                                  <label for="cmbNoteSubCategory" class="control-label">Sub Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="inputEmail3">
+                                    <select class="form-control" id="cmbNoteSubCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrSubCategories as $arrSubCategory){
@@ -667,16 +621,16 @@
 
                               <div class="form-group">
                                 <div class="col-sm-2">
-                                  <label for="inputEmail3" class="control-label">Note</label>
+                                  <label for="txaNote" class="control-label">Note</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" id="inputEmail3" placeholder="Note" style="height: 500px; resize: none"></textarea>
+                                    <textarea class="form-control" id="txaNote" placeholder="Note" style="height: 500px; resize: none"></textarea>
                                 </div>
                               </div>
 
                               <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="button" class="btn btn-primary btnResetAddTab" mode="AddNote">Reset</button>
+                                    <button type="button" class="btn btn-primary" id="btnResetNote" mode="AddNote">Reset</button>
                                     <button type="button" class="btn btn-primary" id="btnSaveNote">Save</button>
                                 </div>
                               </div>
@@ -709,7 +663,14 @@
                                   <label for="cmbPhoneBookGroup" class="control-label">Group</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbPhoneBookGroup"></select>
+                                    <select class="form-control" id="cmbPhoneBookGroup">
+                                        <option value=""></option>
+                                        <?php
+                                            foreach($arrGroups as $arrGroup){
+                                                echo "<option value='{$arrGroup["id"]}'>{$arrGroup["name"]}</option>";
+                                            }
+                                        ?>
+                                    </select>
                                 </div>
                               </div>
 
@@ -718,7 +679,14 @@
                                   <label for="cmbPhoneBookSubGroup" class="control-label">Sub Group</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbPhoneBookSubGroup"></select>
+                                    <select class="form-control" id="cmbPhoneBookSubGroup">
+                                        <option value=""></option>
+                                        <?php
+                                            foreach($arrSubGroups as $arrSubGroup){
+                                                echo "<option value='{$arrSubGroup["id"]}'>{$arrSubGroup["name"]}</option>";
+                                            }
+                                        ?>
+                                    </select>
                                 </div>
                               </div>
                                 
@@ -801,7 +769,7 @@
 
                               <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="button" class="btn btn-primary btnResetAddTab" mode="AddPhoneBook">Reset</button>
+                                    <button type="button" class="btn btn-primary" id="btnResetPhoneBook" mode="AddPhoneBook">Reset</button>
                                     <button type="button" class="btn btn-primary" id="btnSavePhoneBook">Save</button>
                                 </div>
                               </div>
@@ -820,20 +788,20 @@
                             <table class="table table-hover">
                               <thead>
                                 <tr>
-                                  <th style="width: 40px;">Sl No</th>
+                                  <th style="width: 50px;">Sl No</th>
                                   <th>Category</th>
                                   <th style="width: 33px;">Edit</th>
                                   <th style="width: 50px;">Delete</th>
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody id="addCategoryGrid">
                                 <?php
                                     foreach($arrCategories as $intKey => $arrCategory){
                                         echo "<tr category='{$arrCategory["id"]}'>
-                                                  <td>".++$intKey."</td>
+                                                  <td class='serial'>".++$intKey."</td>
                                                   <td>{$arrCategory["name"]}</td>
-                                                  <td><a><i class='fa fa-pencil fa-fw pointer'></i></a></td>
-                                                  <td><a><i class='fa fa-trash fa-fw pointer'></i></a></td>
+                                                  <td><a><i class='fa fa-pencil fa-fw pointer editCategory'></i></a></td>
+                                                  <td><a><i class='fa fa-trash fa-fw pointer deleteCategory'></i></a></td>
                                                 </tr>";
                                     }
                                 ?>
@@ -862,20 +830,20 @@
                             <table class="table table-hover">
                               <thead>
                                 <tr>
-                                  <th style="width: 40px;">Sl No</th>
+                                  <th style="width: 50px;">Sl No</th>
                                   <th>Sub Category</th>
                                   <th style="width: 33px;">Edit</th>
                                   <th style="width: 50px;">Delete</th>
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody id="addSubCategoryGrid">
                                 <?php
                                     foreach($arrSubCategories as $intKey => $arrSubCategory){
                                         echo "<tr category='{$arrSubCategory["id"]}'>
-                                                  <td>".++$intKey."</td>
+                                                  <td class='serial'>".++$intKey."</td>
                                                   <td>{$arrSubCategory["name"]}</td>
-                                                  <td><a><i class='fa fa-pencil fa-fw pointer'></i></a></td>
-                                                  <td><a><i class='fa fa-trash fa-fw pointer'></i></a></td>
+                                                  <td><a><i class='fa fa-pencil fa-fw pointer editSubCategory'></i></a></td>
+                                                  <td><a><i class='fa fa-trash fa-fw pointer deleteSubCategory'></i></a></td>
                                                 </tr>";
                                     }
                                 ?>
@@ -904,31 +872,23 @@
                             <table class="table table-hover">
                               <thead>
                                 <tr>
-                                  <th style="width: 40px;">Sl No</th>
+                                  <th style="width: 50px;">Sl No</th>
                                   <th>Group</th>
                                   <th style="width: 33px;">Edit</th>
                                   <th style="width: 50px;">Delete</th>
                                 </tr>
                               </thead>
-                              <tbody>
-                                <tr>
-                                  <td>1</td>
-                                  <td>Mark</td>
-                                  <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                                  <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                                </tr>
-                                <tr>
-                                  <td>2</td>
-                                  <td>Jacob</td>
-                                  <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                                  <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                                </tr>
-                                <tr>
-                                  <td>3</td>
-                                  <td>Larry</td>
-                                  <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                                  <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                                </tr>
+                              <tbody id="addGroupGrid">
+                                <?php
+                                    foreach($arrGroups as $intKey => $arrGroup){ 
+                                        echo "<tr group='{$arrGroup["id"]}'>
+                                                  <td class='serial'>".($intKey+1)."</td>
+                                                  <td>{$arrGroup["name"]}</td>
+                                                  <td><a><i class='fa fa-pencil fa-fw pointer editGroup'></i></a></td>
+                                                  <td><a><i class='fa fa-trash fa-fw pointer deleteGroup'></i></a></td>
+                                                </tr>";
+                                    }
+                                ?>
                               </tbody>
                             </table>
 
@@ -954,31 +914,23 @@
                             <table class="table table-hover">
                               <thead>
                                 <tr>
-                                  <th style="width: 40px;">Sl No</th>
+                                  <th style="width: 50px;">Sl No</th>
                                   <th>Sub Group</th>
                                   <th style="width: 33px;">Edit</th>
                                   <th style="width: 50px;">Delete</th>
                                 </tr>
                               </thead>
-                              <tbody>
-                                <tr>
-                                  <td>1</td>
-                                  <td>Mark</td>
-                                  <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                                  <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                                </tr>
-                                <tr>
-                                  <td>2</td>
-                                  <td>Jacob</td>
-                                  <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                                  <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                                </tr>
-                                <tr>
-                                  <td>3</td>
-                                  <td>Larry</td>
-                                  <td><a><i class="fa fa-pencil fa-fw pointer"></i></a></td>
-                                  <td><a><i class="fa fa-trash fa-fw pointer"></i></a></td>
-                                </tr>
+                              <tbody id="addSubGroupGrid">
+                                <?php
+                                    foreach($arrSubGroups as $intKey => $arrSubGroup){
+                                        echo "<tr group='{$arrSubGroup["id"]}'>
+                                                  <td class='serial'>".($intKey+1)."</td>
+                                                  <td>{$arrSubGroup["name"]}</td>
+                                                  <td><a><i class='fa fa-pencil fa-fw pointer editGroup'></i></a></td>
+                                                  <td><a><i class='fa fa-trash fa-fw pointer deleteGroup'></i></a></td>
+                                                </tr>";
+                                    }
+                                ?>
                               </tbody>
                             </table>
 
