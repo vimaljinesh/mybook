@@ -12,7 +12,18 @@ class PhoneBook extends CI_Controller {
     
     public function getPhoneBook(){
         $this->load->library("mybook/PhoneBookLib");
-        $arrResult = $this->phonebooklib->getPhoneBook();
+        $objSearchData = json_decode($this->input->post('strSearchData'));
+        $strWhere = "";
+        if($objSearchData->name != ""){
+            $strWhere .= " and pm.vchr_name like '%".addslashes($objSearchData->name)."%' ";
+        }
+        if($objSearchData->group != ""){
+            $strWhere .= " and pm.fk_group_id = $objSearchData->group ";
+        }
+        if($objSearchData->subgroup != ""){
+            $strWhere .= " and pm.fk_sub_group_id = $objSearchData->subgroup ";
+        }
+        $arrResult = $this->phonebooklib->getPhoneBook($strWhere);
         $this->commonlib->sendJson($arrResult);
     }
     

@@ -101,18 +101,18 @@ class PhoneBookLib{
         $arrPhoneBook = array();
         foreach ($objResult->result() as $objRow){
             $arrPhoneBook[] = array(
-                "id" => $objRow->pk_phone_book_master_id,
-                "name" => $objRow->vchr_name,
-                "group" => $objRow->fk_group_id,
-                "group_name" => $objRow->group,
-                "subgroup" => $objRow->fk_sub_group_id,
-                "subgroup_name" => $objRow->subgroup,
-                "phone" => $objRow->phone,
-                "mobile" => $objRow->mobile,
-                "email" => $objRow->email,
-                "fax" => $objRow->fax,
-                "address" => $objRow->vchr_address,
-                "description" => $objRow->vchr_description,
+                "id" => $objRow->pk_phone_book_master_id?$objRow->pk_phone_book_master_id:"",
+                "name" => $objRow->vchr_name?$objRow->vchr_name:"",
+                "group" => $objRow->fk_group_id?$objRow->fk_group_id:"",
+                "group_name" => $objRow->group?$objRow->group:"",
+                "subgroup" => $objRow->fk_sub_group_id?$objRow->fk_sub_group_id:"",
+                "subgroup_name" => $objRow->subgroup?$objRow->subgroup:"",
+                "phone" => $objRow->phone?$objRow->phone:"",
+                "mobile" => $objRow->mobile?$objRow->mobile:"",
+                "email" => $objRow->email?$objRow->email:"",
+                "fax" => $objRow->fax?$objRow->fax:"",
+                "address" => $objRow->vchr_address?$objRow->vchr_address:"",
+                "description" => $objRow->vchr_description?$objRow->vchr_description:"",
             );
         }
         

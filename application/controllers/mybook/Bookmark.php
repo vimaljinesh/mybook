@@ -12,7 +12,18 @@ class Bookmark extends CI_Controller {
     
     public function getBookmark(){
         $this->load->library("mybook/BookmarkLib");
-        $arrResult = $this->bookmarklib->getBookmark();
+        $objSearchData = json_decode($this->input->post('strSearchData'));
+        $strWhere = "";
+        if($objSearchData->name != ""){
+            $strWhere .= " and b.vchr_name like '%".addslashes($objSearchData->name)."%' ";
+        }
+        if($objSearchData->category != ""){
+            $strWhere .= " and b.fk_category_id = $objSearchData->category ";
+        }
+        if($objSearchData->subcategory != ""){
+            $strWhere .= " and b.fk_sub_category_id = $objSearchData->subcategory ";
+        }
+        $arrResult = $this->bookmarklib->getBookmark($strWhere);
         $this->commonlib->sendJson($arrResult);
     }
     

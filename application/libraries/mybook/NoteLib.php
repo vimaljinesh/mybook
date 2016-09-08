@@ -60,13 +60,13 @@ class NoteLib{
         $arrNote = array();
         foreach ($objResult->result() as $objRow){
             $arrNote[] = array(
-                "id" => $objRow->pk_note_id,
-                "name" => $objRow->vchr_name,
-                "category" => $objRow->fk_category_id,
-                "category_name" => $objRow->category,
-                "subcategory" => $objRow->fk_sub_category_id,
-                "subcategory_name" => $objRow->subcategory,
-                "note" => $objRow->txt_note,
+                "id" => $objRow->pk_note_id?$objRow->pk_note_id:"",
+                "name" => $objRow->vchr_name?$objRow->vchr_name:"",
+                "category" => $objRow->fk_category_id?$objRow->fk_category_id:"",
+                "category_name" => $objRow->category?$objRow->category:"",
+                "subcategory" => $objRow->fk_sub_category_id?$objRow->fk_sub_category_id:"",
+                "subcategory_name" => $objRow->subcategory?$objRow->subcategory:"",
+                "note" => $objRow->txt_note?$objRow->txt_note:"",
             );
         }
         

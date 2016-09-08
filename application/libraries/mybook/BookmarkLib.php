@@ -61,14 +61,14 @@ class BookmarkLib{
         $arrBookmark = array();
         foreach ($objResult->result() as $objRow){
             $arrBookmark[] = array(
-                "id" => $objRow->pk_bookmark_id,
-                "name" => $objRow->vchr_name,
-                "url" => $objRow->vchr_url,
-                "category" => $objRow->fk_category_id,
-                "category_name" => $objRow->category,
-                "subcategory" => $objRow->fk_sub_category_id,
-                "subcategory_name" => $objRow->subcategory,
-                "description" => $objRow->vchr_description,
+                "id" => $objRow->pk_bookmark_id?$objRow->pk_bookmark_id:"",
+                "name" => $objRow->vchr_name?$objRow->vchr_name:"",
+                "url" => $objRow->vchr_url?$objRow->vchr_url:"",
+                "category" => $objRow->fk_category_id?$objRow->fk_category_id:"",
+                "category_name" => $objRow->category?$objRow->category:"",
+                "subcategory" => $objRow->fk_sub_category_id?$objRow->fk_sub_category_id:"",
+                "subcategory_name" => $objRow->subcategory?$objRow->subcategory:"",
+                "description" => $objRow->vchr_description?$objRow->vchr_description:"",
             );
         }
         

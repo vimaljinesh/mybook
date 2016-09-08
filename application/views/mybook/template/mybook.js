@@ -40,6 +40,7 @@ $(function(){
                 success:  function(objResult){
                     if(objResult.Message == "SUCCESS"){
                         intBookMarkId = objResult.intId
+                        $("#BookMarkSearch").click()
                         setMessage("Bookmark Has Been Saved", 1)
                     }
                     else if(objResult == "DUPLICATE"){
@@ -55,12 +56,85 @@ $(function(){
          
      })
      
+     $(document).on("click", ".deleteBookmark", function(){
+        var objThis = $(this)
+        var intBookmarkId = $(this).closest("tr").attr("bookmark")
+        
+        swal({
+          title: 'Are You Sure To Delete This?',
+          text: "",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(function() {
+            
+            $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/bookmark/deletebookmark",
+                data: "intBookmarkId="+intBookmarkId,
+                async: false,
+                success:  function(objResult){
+                    if(objResult == "SUCCESS"){
+                        objThis.closest("tr").remove()
+                        setSerialNo("#BookmarkGrid .serial")
+                    }
+                }
+            });
+            
+        })
+    })
+    
+    $("#BookMarkSearch").click(function(){
+        var objSearchData = {
+            name : $.trim($("#searchBookmarkName").val()),
+            category : $("#searchBookmarkCategory").val(),
+            subcategory : $("#searchBookmarkSubCategory").val(),
+        }
+        
+        var strSearchData = JSON.stringify(objSearchData)
+        
+        $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/bookmark/getbookmark",
+                data: "strSearchData="+strSearchData,
+                async: false,
+                success:  function(objResult){
+                    var strBookMarks = ""
+                    $.each(objResult, function(intKey, objData){
+                        strBookMarks += "<tr bookmark='"+objData.id+"'>\n\
+                                          <td class='serial'>"+(intKey+1)+"</td>\n\
+                                          <td url='"+objData.url+"' class='goToUrl pointer' style='color:#337cbb'>"+objData.name+"</td>\n\
+                                          <td>"+objData.category_name+"</td>\n\
+                                          <td>"+objData.subcategory_name+"</td>\n\
+                                          <td>"+objData.description+"</td>\n\
+                                          <td><a><i class='fa fa-pencil fa-fw pointer editBookmark'></i></a></td>\n\
+                                          <td><a><i class='fa fa-trash fa-fw pointer deleteBookmark'></i></a></td>\n\
+                                        </tr>"
+                    })
+                    $("#BookmarkGrid").html(strBookMarks)
+                }
+            });
+    })
+     
+     $("#BookMarkReset").click(function(){
+         $("#searchBookmarkName, #searchBookmarkCategory, #searchBookmarkSubCategory").val("")
+     })
+     
      $("#btnResetBookMark").click(function(){
          intBookMarkId = ""
          $(".AddTabMessage").hide()
          $("#AddBookMark").find("input:text").val("")
          $("#AddBookMark").find("select").val("")
          $("#AddBookMark").find("textarea").val("")
+     })
+     
+     $(".goToUrl").click(function(){
+         var strUrl = $(this).attr("url")
+         if(strUrl != ""){
+             window.open(strUrl, "_blank");
+         }
      })
      
     // note ****************************************************************************
@@ -84,6 +158,7 @@ $(function(){
                 success:  function(objResult){
                     if(objResult.Message == "SUCCESS"){
                         intNoteId = objResult.intId
+                        $("#NoteSearch").click()
                         setMessage("Note Has Been Saved", 1)
                     }
                     else if(objResult == "DUPLICATE"){
@@ -94,6 +169,71 @@ $(function(){
                     }
                 }
             });
+     })
+     
+     $(document).on("click", ".deleteNote", function(){
+        var objThis = $(this)
+        var intNoteId = $(this).closest("tr").attr("note")
+        
+        swal({
+          title: 'Are You Sure To Delete This?',
+          text: "",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(function() {
+            
+            $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/note/deletenote",
+                data: "intNoteId="+intNoteId,
+                async: false,
+                success:  function(objResult){
+                    if(objResult == "SUCCESS"){
+                        objThis.closest("tr").remove()
+                        setSerialNo("#NoteGrid .serial")
+                    }
+                }
+            });
+            
+        })
+    })
+    
+    $("#NoteSearch").click(function(){
+        var objSearchData = {
+            name : $.trim($("#searchNoteName").val()),
+            category : $("#searchNoteCategory").val(),
+            subcategory : $("#searchNoteSubCategory").val(),
+        }
+        
+        var strSearchData = JSON.stringify(objSearchData)
+        
+        $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/note/getnote",
+                data: "strSearchData="+strSearchData,
+                async: false,
+                success:  function(objResult){
+                    var strNotes = ""
+                    $.each(objResult, function(intKey, objData){
+                        strNotes += "<tr note='"+objData.id+"'>\n\
+                                          <td class='serial'>"+(intKey+1)+"</td>\n\
+                                          <td>"+objData.name+"</td>\n\
+                                          <td>"+objData.category_name+"</td>\n\
+                                          <td>"+objData.subcategory_name+"</td>\n\
+                                          <td><a><i class='fa fa-pencil fa-fw pointer editNote'></i></a></td>\n\
+                                          <td><a><i class='fa fa-trash fa-fw pointer deleteNote'></i></a></td>\n\
+                                        </tr>"
+                    })
+                    $("#NoteGrid").html(strNotes)
+                }
+            });
+    })
+     
+     $("#NoteReset").click(function(){
+         $("#searchNoteName, #searchNoteCategory, #searchNoteSubCategory").val("")
      })
      
      $("#btnResetNote").click(function(){
@@ -199,6 +339,7 @@ $(function(){
                    success:  function(objResult){
                        if(objResult.Message == "SUCCESS"){
                            intPhoneBookId = objResult.intId
+                           $("#PhoneBookSearch").click()
                            setMessage("Phone Book Has Been Saved", 1)
                        }
                        else if(objResult == "DUPLICATE"){
@@ -213,6 +354,74 @@ $(function(){
         
         
     })
+    
+    $(document).on("click", ".deletePhoneBook", function(){
+        var objThis = $(this)
+        var intPhoneBookId = $(this).closest("tr").attr("phonebook")
+        
+        swal({
+          title: 'Are You Sure To Delete This?',
+          text: "",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(function() {
+            
+            $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/phoneBook/deletephonebook",
+                data: "intPhoneBookId="+intPhoneBookId,
+                async: false,
+                success:  function(objResult){
+                    if(objResult == "SUCCESS"){
+                        objThis.closest("tr").remove()
+                        setSerialNo("#PhoneBookGrid .serial")
+                    }
+                }
+            });
+            
+        })
+    })
+    
+    $("#PhoneBookSearch").click(function(){
+        var objSearchData = {
+            name : $.trim($("#searchPhoneBookName").val()),
+            group : $("#searchPhoneBookGroup").val(),
+            subgroup : $("#searchPhoneBookSubGroup").val(),
+        }
+        
+        var strSearchData = JSON.stringify(objSearchData)
+        
+        $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/phoneBook/getphonebook",
+                data: "strSearchData="+strSearchData,
+                async: false,
+                success:  function(objResult){
+                    var strPhoneBook = ""
+                    $.each(objResult, function(intKey, objData){
+                        strPhoneBook += "<tr phonebook='"+objData.id+"'>\n\
+                                          <td class='serial'>"+(intKey+1)+"</td>\n\
+                                          <td>"+objData.name+"</td>\n\
+                                          <td>"+objData.phone+"</td>\n\
+                                          <td>"+objData.mobile+"</td>\n\
+                                          <td>"+objData.email+"</td>\n\
+                                          <td>"+objData.fax+"</td>\n\
+                                          <td>"+objData.description+"</td>\n\
+                                          <td><a><i class='fa fa-pencil fa-fw pointer editPhoneBook'></i></a></td>\n\
+                                          <td><a><i class='fa fa-trash fa-fw pointer deletePhoneBook'></i></a></td>\n\
+                                        </tr>"
+                    })
+                    $("#PhoneBookGrid").html(strPhoneBook)
+                }
+            });
+    })
+     
+     $("#PhoneBookReset").click(function(){
+         $("#searchPhoneBookName, #searchPhoneBookGroup, #searchPhoneBookSubGroup").val("")
+     })
     
     $("#btnResetPhoneBook").click(function(){
         intPhoneBookId = ""

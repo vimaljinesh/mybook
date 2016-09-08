@@ -12,7 +12,18 @@ class Note extends CI_Controller {
     
     public function getNote(){
         $this->load->library("mybook/NoteLib");
-        $arrResult = $this->notelib->getNote();
+        $objSearchData = json_decode($this->input->post('strSearchData'));
+        $strWhere = "";
+        if($objSearchData->name != ""){
+            $strWhere .= " and n.vchr_name like '%".addslashes($objSearchData->name)."%' ";
+        }
+        if($objSearchData->category != ""){
+            $strWhere .= " and n.fk_category_id = $objSearchData->category ";
+        }
+        if($objSearchData->subcategory != ""){
+            $strWhere .= " and n.fk_sub_category_id = $objSearchData->subcategory ";
+        }
+        $arrResult = $this->notelib->getNote($strWhere);
         $this->commonlib->sendJson($arrResult);
     }
     
