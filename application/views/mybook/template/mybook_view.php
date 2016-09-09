@@ -6,6 +6,7 @@
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/sweetalert2/4.2.6/sweetalert2.min.js"></script>
+    <script src="//cdn.ckeditor.com/4.5.11/full/ckeditor.js"></script>
     <script>
         strBaseUrl = "<?php echo $arrBaseUrl; ?>"
         <?php
@@ -15,6 +16,7 @@
     <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/sweetalert2/4.2.6/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <title>MyBook - Vimal</title>
     
     <style>
         
@@ -32,21 +34,21 @@
         <div class="row">
           <div class="col-md-12">
               
-            <h1>Bookmark / Notes / Phone Book</h1>
+              <h1 id="AppName">Bookmark / Notes / Phone Book</h1>
             
             <hr>
             
             <ul class="nav nav-tabs">
-              <li class="active">
+              <li class="mainTabs active">
                 <a data-toggle="tab" href="#BookmarkTab">Book Marks</a>
               </li>
-              <li>
+              <li class="mainTabs">
                 <a data-toggle="tab" href="#NotesTab">Notes</a>
               </li>
-              <li>
+              <li class="mainTabs">
                 <a data-toggle="tab" href="#PhoneBookTab">Phone Book</a>
               </li>
-              <li>
+              <li class="mainTabs">
                 <a data-toggle="tab" href="#AddTab">Add</a>
               </li>
             </ul>
@@ -54,7 +56,7 @@
             <div class="tab-content">
                 
               <!--******************************************* BookmarkTab-->  
-              <div id="BookmarkTab" class="tab-pane fade in active">
+              <div id="BookmarkTab" class="mainTabsData tab-pane fade in active">
                   
                 <form class="form-horizontal" role="form">
                   <div class="form-group" style="margin-top: 15px;">
@@ -130,7 +132,7 @@
               </div>
                 
               <!--******************************************* NotesTab-->   
-              <div id="NotesTab" class="tab-pane fade">
+              <div id="NotesTab" class="mainTabsData tab-pane fade">
                   
                   <div id="NotesList">
                       
@@ -193,7 +195,7 @@
                             foreach($arrNote as $intKey => $arrData){
                                 echo "<tr note='{$arrData["id"]}'>
                                           <td class='serial'>".($intKey+1)."</td>
-                                          <td>{$arrData["name"]}</td>
+                                          <td class='showNote pointer' style='color:#337cbb'>{$arrData["name"]}</td>
                                           <td>{$arrData["category_name"]}</td>
                                           <td>{$arrData["subcategory_name"]}</td>
                                           <td><a><i class='fa fa-pencil fa-fw pointer editNote'></i></a></td>
@@ -213,8 +215,18 @@
                       <h3>Notes</h3>
 
                         <hr>
-
+                        
                           <div class="row">
+                            <div class="col-sm-12">
+                                <h3 id="noteName"></h3>
+                            </div>
+                          </div>
+                        
+                          <div class="row">
+                              <div class="col-sm-12" id="noteData"></div>
+                          </div>
+
+<!--                          <div class="row">
                             <div class="col-sm-2">
                               <label for="inputEmail3" class="control-label">Name</label>
                             </div>
@@ -248,13 +260,14 @@
                             <div class="col-sm-10">
                                 my address
                             </div>
-                          </div>
+                          </div>-->
 
                         <hr>
 
                         <div class="row">
                           <div class="col-sm-12">
-                            <button type="button" class="btn btn-primary">Edit</button>
+                              <button type="button" class="btn btn-primary" id="GoToNoteList">Back</button>
+                              <button type="button" class="btn btn-primary" id="EditNote">Edit</button>
                           </div>
                         </div>
                         
@@ -263,7 +276,7 @@
               </div>
                 
               <!--******************************************* PhoneBookTab-->  
-              <div id="PhoneBookTab" class="tab-pane fade">
+              <div id="PhoneBookTab" class="mainTabsData tab-pane fade">
                   
                   <div id="PhoneBookList">
                       
@@ -328,7 +341,7 @@
                             foreach($arrPhoneBook as $intKey => $arrData){
                                 echo "<tr phonebook='{$arrData["id"]}'>
                                           <td class='serial'>".($intKey+1)."</td>
-                                          <td>{$arrData["name"]}</td>
+                                          <td class='showPhoneBook pointer' style='color:#337cbb'>{$arrData["name"]}</td>
                                           <td>{$arrData["phone"]}</td>
                                           <td>{$arrData["mobile"]}</td>
                                           <td>{$arrData["email"]}</td>
@@ -473,7 +486,7 @@
               </div>
               
               <!--******************************************* AddTab-->
-              <div id="AddTab" class="tab-pane fade">
+              <div id="AddTab" class="mainTabsData tab-pane fade">
                   
                   <div class="section">
                   <div class="container">
@@ -627,7 +640,7 @@
                                   <label for="txaNote" class="control-label">Note</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" id="txaNote" placeholder="Note" style="height: 500px; resize: none"></textarea>
+                                    <textarea class="form-control" name="txaNote" id="txaNote" placeholder="Note" style="height: 500px; resize: none"></textarea>
                                 </div>
                               </div>
 

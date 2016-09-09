@@ -4,9 +4,38 @@ $(function(){
     strGlobalSubCategory = ""
     strGlobalGroup = ""
     strGlobalSubGroup = ""
-    intBookMarkId = ""
-    intNoteId = ""
-    intPhoneBookId = ""
+    intGlobalBookMarkId = ""
+    intGlobalNoteId = ""
+    intGlobalPhoneBookId = ""
+    
+    $(document).ready(function(){
+//        CKEDITOR.editorConfig = function( config ) {
+//                config.uiColor = '#F7B42C';
+//                config.height = 700;
+//                config.toolbarCanCollapse = true;
+//        };
+
+        CKEDITOR.replace("txaNote", {
+            uiColor: '#9AB8F3', 
+            height: 400,
+            
+            toolbarGroups: [
+		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+		{ name: 'forms', groups: [ 'forms' ] },
+                { name: 'tools', groups: [ 'tools' ] },
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+                { name: 'colors', groups: [ 'colors' ] },
+		{ name: 'insert', groups: [ 'insert' ] },
+		{ name: 'styles', groups: [ 'styles' ] },
+                { name: 'links', groups: [ 'links' ] },
+		{ name: 'others', groups: [ 'others' ] },
+//		{ name: 'about', groups: [ 'about' ] }
+            ]
+        });
+    })
     
     $(".addTabLeftMenu").click(function(){
         if(!$(this).hasClass("active")){
@@ -23,7 +52,7 @@ $(function(){
      $("#btnSaveBookMark").click(function(){
          if($.trim($("#txtBookmarkName").val()) != "" && $.trim($("#txtBookmarkUrl").val()) != ""){
              var objBookMark = {
-                 id          : intBookMarkId,
+                 id          : intGlobalBookMarkId,
                  name        : $.trim($("#txtBookmarkName").val()),
                  url         : $.trim($("#txtBookmarkUrl").val()),
                  category    : $.trim($("#cmbBookmarkCategory").val()),
@@ -39,7 +68,7 @@ $(function(){
                 async: false,
                 success:  function(objResult){
                     if(objResult.Message == "SUCCESS"){
-                        intBookMarkId = objResult.intId
+                        intGlobalBookMarkId = objResult.intId
                         $("#BookMarkSearch").click()
                         setMessage("Bookmark Has Been Saved", 1)
                     }
@@ -77,6 +106,9 @@ $(function(){
                 async: false,
                 success:  function(objResult){
                     if(objResult == "SUCCESS"){
+                        if(intGlobalBookMarkId == intBookmarkId){
+                            $("#btnResetBookMark").click()
+                        }
                         objThis.closest("tr").remove()
                         setSerialNo("#BookmarkGrid .serial")
                     }
@@ -88,6 +120,7 @@ $(function(){
     
     $("#BookMarkSearch").click(function(){
         var objSearchData = {
+            strLoadId : "",
             name : $.trim($("#searchBookmarkName").val()),
             category : $("#searchBookmarkCategory").val(),
             subcategory : $("#searchBookmarkSubCategory").val(),
@@ -123,7 +156,7 @@ $(function(){
      })
      
      $("#btnResetBookMark").click(function(){
-         intBookMarkId = ""
+         intGlobalBookMarkId = ""
          $(".AddTabMessage").hide()
          $("#AddBookMark").find("input:text").val("")
          $("#AddBookMark").find("select").val("")
@@ -137,15 +170,47 @@ $(function(){
          }
      })
      
+     $(document).on("click", ".editBookmark", function(){
+         var objGetData = {
+            strLoadId : $(this).closest("tr").attr("bookmark"),
+            name : "",
+            category : "",
+            subcategory : "",
+        }
+        
+        var strGetData = JSON.stringify(objGetData)
+        
+         $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/bookmark/getbookmark",
+                data: "strSearchData="+strGetData,
+                async: false,
+                success:  function(objResult){
+                    if(objResult[0]){
+                        var objData = objResult[0]
+                        
+                        intGlobalBookMarkId = objData.id
+                        $("#txtBookmarkName").val(objData.name)
+                        $("#txtBookmarkUrl").val(objData.url)
+                        $("#cmbBookmarkCategory").val(objData.category)
+                        $("#cmbBookmarkSubCategory").val(objData.subcategory)
+                        $("#txtBookmarkDescri").val(objData.description)
+                        
+                        setUpdateMode("AddBookMark")
+                    }
+                }
+            });
+     })
+     
     // note ****************************************************************************
      $("#btnSaveNote").click(function(){
          if($.trim($("#txtNoteName").val()) != ""){
              var objNote = {
-                 id          : intNoteId,
+                 id          : intGlobalNoteId,
                  name        : $.trim($("#txtNoteName").val()),
                  category    : $.trim($("#cmbNoteCategory").val()),
                  subcategory : $.trim($("#cmbNoteSubCategory").val()),
-                 note        : $.trim($("#txaNote").val()),
+                 note        : CKEDITOR.instances['txaNote'].getData(),//$.trim($("#txaNote").val()),
              }
          }
          var strNote = JSON.stringify(objNote);
@@ -157,7 +222,7 @@ $(function(){
                 async: false,
                 success:  function(objResult){
                     if(objResult.Message == "SUCCESS"){
-                        intNoteId = objResult.intId
+                        intGlobalNoteId = objResult.intId
                         $("#NoteSearch").click()
                         setMessage("Note Has Been Saved", 1)
                     }
@@ -192,6 +257,9 @@ $(function(){
                 async: false,
                 success:  function(objResult){
                     if(objResult == "SUCCESS"){
+                        if(intGlobalNoteId == intNoteId){
+                            $("#btnResetNote").click()
+                        }
                         objThis.closest("tr").remove()
                         setSerialNo("#NoteGrid .serial")
                     }
@@ -203,6 +271,7 @@ $(function(){
     
     $("#NoteSearch").click(function(){
         var objSearchData = {
+            strLoadId : "",
             name : $.trim($("#searchNoteName").val()),
             category : $("#searchNoteCategory").val(),
             subcategory : $("#searchNoteSubCategory").val(),
@@ -220,7 +289,7 @@ $(function(){
                     $.each(objResult, function(intKey, objData){
                         strNotes += "<tr note='"+objData.id+"'>\n\
                                           <td class='serial'>"+(intKey+1)+"</td>\n\
-                                          <td>"+objData.name+"</td>\n\
+                                          <td class='showNote pointer' style='color:#337cbb'>"+objData.name+"</td>\n\
                                           <td>"+objData.category_name+"</td>\n\
                                           <td>"+objData.subcategory_name+"</td>\n\
                                           <td><a><i class='fa fa-pencil fa-fw pointer editNote'></i></a></td>\n\
@@ -237,11 +306,53 @@ $(function(){
      })
      
      $("#btnResetNote").click(function(){
-         intNoteId = ""
+         intGlobalNoteId = ""
          $(".AddTabMessage").hide()
          $("#AddNote").find("input:text").val("")
          $("#AddNote").find("select").val("")
          $("#AddNote").find("textarea").val("")
+         CKEDITOR.instances['txaNote'].setData("")
+     })
+     
+     $(document).on("click", ".showNote", function(){
+        var objSearchData = {
+            strLoadId : $(this).closest("tr").attr("note"),
+            name : "",
+            category : "",
+            subcategory : "",
+        }
+        
+        var strSearchData = JSON.stringify(objSearchData)
+        
+        $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/note/getnote",
+                data: "strSearchData="+strSearchData,
+                async: false,
+                success:  function(objResult){
+                    if(objResult[0]){
+                        var objData = objResult[0]
+                        $("#noteName").html("<i style='color:#337cbb'>"+objData.name+"</i><br>")
+                        $("#noteData").html(objData.note)
+                        $("#EditNote").attr("note", objData.id)
+                        $("#NotesList").hide()
+                        $("#NoteView").show()
+                    }
+                }
+            });
+     })
+     
+     $("#EditNote").click(function(){
+         loadNoatInEditMode($(this).attr("note"))
+     })
+     
+     $(".editNote").click(function(){
+         loadNoatInEditMode($(this).closest("tr").attr("note"))
+     })
+     
+     $("#GoToNoteList").click(function(){
+         $("#NoteView").hide()
+         $("#NotesList").show()
      })
      
     // phone book ****************************************************************************
@@ -318,7 +429,7 @@ $(function(){
                 }
             })
 
-            objPhoneBook["id"] = intPhoneBookId
+            objPhoneBook["id"] = intGlobalPhoneBookId
             objPhoneBook["name"] = $.trim($("#txtPhoneBookName").val())
             objPhoneBook["group"] = $.trim($("#cmbPhoneBookGroup").val())
             objPhoneBook["subgroup"] = $.trim($("#cmbPhoneBookSubGroup").val())
@@ -338,7 +449,7 @@ $(function(){
                    async: false,
                    success:  function(objResult){
                        if(objResult.Message == "SUCCESS"){
-                           intPhoneBookId = objResult.intId
+                           intGlobalPhoneBookId = objResult.intId
                            $("#PhoneBookSearch").click()
                            setMessage("Phone Book Has Been Saved", 1)
                        }
@@ -376,6 +487,9 @@ $(function(){
                 async: false,
                 success:  function(objResult){
                     if(objResult == "SUCCESS"){
+                        if(intGlobalPhoneBookId == intPhoneBookId){
+                            $("#btnResetPhoneBook").click()
+                        }
                         objThis.closest("tr").remove()
                         setSerialNo("#PhoneBookGrid .serial")
                     }
@@ -387,6 +501,7 @@ $(function(){
     
     $("#PhoneBookSearch").click(function(){
         var objSearchData = {
+            strLoadId : "",
             name : $.trim($("#searchPhoneBookName").val()),
             group : $("#searchPhoneBookGroup").val(),
             subgroup : $("#searchPhoneBookSubGroup").val(),
@@ -404,7 +519,7 @@ $(function(){
                     $.each(objResult, function(intKey, objData){
                         strPhoneBook += "<tr phonebook='"+objData.id+"'>\n\
                                           <td class='serial'>"+(intKey+1)+"</td>\n\
-                                          <td>"+objData.name+"</td>\n\
+                                          <td class='showPhoneBook pointer' style='color:#337cbb'>"+objData.name+"</td>\n\
                                           <td>"+objData.phone+"</td>\n\
                                           <td>"+objData.mobile+"</td>\n\
                                           <td>"+objData.email+"</td>\n\
@@ -424,7 +539,7 @@ $(function(){
      })
     
     $("#btnResetPhoneBook").click(function(){
-        intPhoneBookId = ""
+        intGlobalPhoneBookId = ""
         $(".AddTabMessage").hide()
         $("#AddPhoneBook").find("input:text").val("")
         $("#AddPhoneBook").find("select").val("")
@@ -904,5 +1019,52 @@ function setMessage(strMessage, intMode){
     }
     $(".AddTabMessage").html(strMessage)
     $(".AddTabMessage").show()
-    $('html,body').animate({scrollTop: $(".AddTabMessage").offset().top},'slow');
+    $('html,body').animate({scrollTop: $("#AppName").offset().top},'slow');
+}
+
+function setUpdateMode(strMenuId){
+    $(".AddTabMessage").hide()
+    $(".mainTabs").removeClass("active")
+    $(".mainTabs").eq(3).addClass("active")
+    $(".mainTabsData").removeClass("in active")
+    $(".mainTabsData").eq(3).addClass("in active")
+    $(".addTabOptions").hide()
+    $(".addTabLeftMenu").removeClass("active")
+    $(".addTabLeftMenu").each(function(){
+        if($(this).attr("option") == strMenuId){
+            $(this).addClass("active")
+        }
+    })
+    $("#"+strMenuId).show()
+}
+
+function loadNoatInEditMode(intNoteId){
+    var objSearchData = {
+        strLoadId : intNoteId,
+        name : "",
+        category : "",
+        subcategory : "",
+    }
+
+    var strSearchData = JSON.stringify(objSearchData)
+
+    $.ajax({
+            type: "POST",
+            url: strBaseUrl+"/mybook/note/getnote",
+            data: "strSearchData="+strSearchData,
+            async: false,
+            success:  function(objResult){
+                if(objResult[0]){
+                    var objData = objResult[0]
+                    intGlobalNoteId = objData.id
+                    $("#txtNoteName").val(objData.name)
+                    $("#cmbNoteCategory").val(objData.category)
+                    $("#cmbNoteSubCategory").val(objData.subcategory)
+                    CKEDITOR.instances['txaNote'].setData(objData.note) //$("#txaNote").val(objData.note)
+
+                    $("#GoToNoteList").click()
+                    setUpdateMode("AddNote")
+                }
+            }
+        });
 }

@@ -14,6 +14,9 @@ class Bookmark extends CI_Controller {
         $this->load->library("mybook/BookmarkLib");
         $objSearchData = json_decode($this->input->post('strSearchData'));
         $strWhere = "";
+        if($objSearchData->strLoadId != ""){
+            $strWhere .= " and b.pk_bookmark_id = $objSearchData->strLoadId ";
+        }
         if($objSearchData->name != ""){
             $strWhere .= " and b.vchr_name like '%".addslashes($objSearchData->name)."%' ";
         }

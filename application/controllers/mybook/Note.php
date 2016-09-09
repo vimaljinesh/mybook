@@ -14,6 +14,9 @@ class Note extends CI_Controller {
         $this->load->library("mybook/NoteLib");
         $objSearchData = json_decode($this->input->post('strSearchData'));
         $strWhere = "";
+        if($objSearchData->strLoadId != ""){
+            $strWhere .= " and n.pk_note_id = $objSearchData->strLoadId ";
+        }
         if($objSearchData->name != ""){
             $strWhere .= " and n.vchr_name like '%".addslashes($objSearchData->name)."%' ";
         }
