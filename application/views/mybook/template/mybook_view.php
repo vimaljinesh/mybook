@@ -34,6 +34,10 @@
         <div class="row">
           <div class="col-md-12">
               
+              <div class="col-md-12 text-right">
+                  <span class="pointer" style="color:#337cbb" id="logout">Logout</span>
+              </div>
+              
               <h1 id="AppName">Bookmark / Notes / Phone Book</h1>
             
             <hr>
@@ -70,7 +74,7 @@
                       <label for="Category" class="control-label">Category</label>
                     </div>
                     <div class="col-sm-2">
-                        <select class="form-control" id="searchBookmarkCategory">
+                        <select class="form-control cmbCategory" id="searchBookmarkCategory">
                             <option value=""></option>
                             <?php
                                 foreach($arrCategories as $arrCategory){
@@ -83,7 +87,7 @@
                       <label for="SubCategory" class="control-label">SubCategory</label>
                     </div>
                     <div class="col-sm-2">
-                        <select class="form-control" id="searchBookmarkSubCategory">
+                        <select class="form-control cmbSubCategory" id="searchBookmarkSubCategory">
                             <option value=""></option>
                             <?php
                                 foreach($arrSubCategories as $arrSubCategory){
@@ -148,7 +152,7 @@
                           <label for="Category" class="control-label">Category</label>
                         </div>
                         <div class="col-sm-2">
-                            <select class="form-control" id="searchNoteCategory">
+                            <select class="form-control cmbCategory" id="searchNoteCategory">
                                 <option value=""></option>
                                 <?php
                                     foreach($arrCategories as $arrCategory){
@@ -161,7 +165,7 @@
                           <label for="SubCategory" class="control-label">SubCategory</label>
                         </div>
                         <div class="col-sm-2">
-                            <select class="form-control" id="searchNoteSubCategory">
+                            <select class="form-control cmbSubCategory" id="searchNoteSubCategory">
                                 <option value=""></option>
                                 <?php
                                     foreach($arrSubCategories as $arrSubCategory){
@@ -292,7 +296,7 @@
                           <label for="Category" class="control-label">Group</label>
                         </div>
                         <div class="col-sm-2">
-                            <select class="form-control" id="searchPhoneBookGroup">
+                            <select class="form-control cmbGroup" id="searchPhoneBookGroup">
                                 <option value=""></option>
                                 <?php
                                     foreach($arrGroups as $arrGroup){
@@ -305,7 +309,7 @@
                           <label for="SubCategory" class="control-label">SubGroup</label>
                         </div>
                         <div class="col-sm-2">
-                            <select class="form-control" id="searchPhoneBookSubGroup">
+                            <select class="form-control cmbSubGroup" id="searchPhoneBookSubGroup">
                                 <option value=""></option>
                                 <?php
                                     foreach($arrSubGroups as $arrSubGroup){
@@ -358,7 +362,7 @@
                   </div>
                   
                   <!--*** NoteView ***-->
-                  <div id="NoteView" style="display: none">
+                  <div id="PhoneBookView" style="display: none">
                       
                       <h3>Phone Book</h3>
                   
@@ -366,118 +370,81 @@
 
                           <div class="row">
                             <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Name</label>
+                              <label for="name" class="control-label">Name</label>
                             </div>
-                            <div class="col-sm-10">
-                              my name
-                            </div>
+                              <div class="col-sm-10" id="pbName"></div>
                           </div>
 
                           <div class="row">
                             <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Group</label>
+                              <label for="group" class="control-label">Group</label>
                             </div>
-                            <div class="col-sm-10">
-                                my group
-                            </div>
+                            <div class="col-sm-10" id="pbGroup"></div>
                           </div>
 
                           <div class="row">
                             <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Sub Group</label>
+                              <label for="subgroup" class="control-label">Sub Group</label>
                             </div>
-                            <div class="col-sm-10">
-                                my sub group
+                            <div class="col-sm-10" id="pbSubGroup"></div>
+                          </div>
+
+                        <div id="pbPhoneGroup">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                  <label for="inputEmail3" class="control-label">Phone</label>
+                                </div>
+                                <div class="col-sm-10" id="pbPhone"></div>
                             </div>
+                        </div>
+
+                        <div id="pbMobileGroup">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                  <label for="inputEmail3" class="control-label">Mobile</label>
+                                </div>
+                                <div class="col-sm-10" id="pbMobile"></div>
+                            </div>
+                        </div>
+
+                        <div id="pbEmailGroup">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                  <label for="inputEmail3" class="control-label">Email</label>
+                                </div>
+                                <div class="col-sm-10" id="pbEmail"></div>
+                            </div>
+                        </div>
+
+                        <div id="pbFaxGroup">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                  <label for="inputEmail3" class="control-label">Fax</label>
+                                </div>
+                                <div class="col-sm-10" id="pbFax"></div>
+                            </div>
+                        </div>
+
+                          <div class="row">
+                            <div class="col-sm-2">
+                              <label for="address" class="control-label">Address</label>
+                            </div>
+                            <div class="col-sm-10" id="pbAddress"></div>
                           </div>
 
                           <div class="row">
                             <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Phone</label>
+                              <label for="description" class="control-label">Description</label>
                             </div>
-                            <div class="col-sm-10">
-                              phone 1
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-10">
-                              phone 2
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Mobile</label>
-                            </div>
-                            <div class="col-sm-10">
-                              mobile 1
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-10">
-                              mobile 2
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Email</label>
-                            </div>
-                            <div class="col-sm-10">
-                              email 1
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-10">
-                              email 2
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Fax</label>
-                            </div>
-                            <div class="col-sm-10">
-                              fax 1
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-10">
-                              fax 2
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Address</label>
-                            </div>
-                            <div class="col-sm-10">
-                                my address
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-sm-2">
-                              <label for="inputEmail3" class="control-label">Description</label>
-                            </div>
-                            <div class="col-sm-10">
-                                my description
-                            </div>
+                            <div class="col-sm-10" id="pbDescription"></div>
                           </div>
 
                         <hr>
 
                         <div class="row">
                           <div class="col-sm-12">
-                            <button type="button" class="btn btn-primary">Edit</button>
+                            <button type="button" class="btn btn-primary" id="GoToPhoneBookList">Back</button>
+                            <button type="button" class="btn btn-primary" id="EditPhoneBook">Edit</button>
                           </div>
                         </div>
                       
@@ -538,7 +505,7 @@
                                   <label for="cmbBookmarkCategory" class="control-label">Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbBookmarkCategory">
+                                    <select class="form-control cmbCategory" id="cmbBookmarkCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrCategories as $arrCategory){
@@ -554,7 +521,7 @@
                                   <label for="cmbBookmarkSubCategory" class="control-label">Sub Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbBookmarkSubCategory">
+                                    <select class="form-control cmbSubCategory" id="cmbBookmarkSubCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrSubCategories as $arrSubCategory){
@@ -608,7 +575,7 @@
                                   <label for="cmbNoteCategory" class="control-label">Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbNoteCategory">
+                                    <select class="form-control cmbCategory" id="cmbNoteCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrCategories as $arrCategory){
@@ -624,7 +591,7 @@
                                   <label for="cmbNoteSubCategory" class="control-label">Sub Category</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbNoteSubCategory">
+                                    <select class="form-control cmbSubCategory" id="cmbNoteSubCategory">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrSubCategories as $arrSubCategory){
@@ -679,7 +646,7 @@
                                   <label for="cmbPhoneBookGroup" class="control-label">Group</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbPhoneBookGroup">
+                                    <select class="form-control cmbGroup" id="cmbPhoneBookGroup">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrGroups as $arrGroup){
@@ -695,7 +662,7 @@
                                   <label for="cmbPhoneBookSubGroup" class="control-label">Sub Group</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="cmbPhoneBookSubGroup">
+                                    <select class="form-control cmbSubGroup" id="cmbPhoneBookSubGroup">
                                         <option value=""></option>
                                         <?php
                                             foreach($arrSubGroups as $arrSubGroup){
@@ -706,13 +673,13 @@
                                 </div>
                               </div>
                                 
-                                <div>
+                                <div id="PhoneBookPhoneGroup">
                                     <div class="form-group">
                                       <div class="col-sm-2">
                                         <label for="txtPhoneBookPhone" class="control-label">Phone</label>
                                       </div>
                                       <div class="col-sm-9">
-                                        <input type="text" class="form-control txtPhoneBookPhone" placeholder="Phone">
+                                          <input type="text" class="form-control txtPhoneBookPhone" id="txtPhoneBookPhone" placeholder="Phone">
                                       </div>
                                       <div class="col-sm-1">
                                         <a><i class="fa fa-plus-square fa-2x PhoneBookDynamicAdd pointer" mode="Phone"></i></a>
@@ -720,13 +687,13 @@
                                     </div>
                                 </div>
                                 
-                                <div>
+                                <div id="PhoneBookMobileGroup">
                                     <div class="form-group">
                                        <div class="col-sm-2">
                                          <label for="txtPhoneBookMobile" class="control-label">Mobile</label>
                                        </div>
                                        <div class="col-sm-9">
-                                         <input type="text" class="form-control txtPhoneBookMobile" placeholder="Mobile">
+                                           <input type="text" class="form-control txtPhoneBookMobile" id="txtPhoneBookMobile" placeholder="Mobile">
                                        </div>
                                        <div class="col-sm-1">
                                          <a><i class="fa fa-plus-square fa-2x PhoneBookDynamicAdd pointer" mode="Mobile"></i></a>
@@ -735,13 +702,13 @@
                                 </div>
                                 
                                 
-                                <div>
+                                <div id="PhoneBookEmailGroup">
                                    <div class="form-group">
                                     <div class="col-sm-2">
                                        <label for="txtPhoneBookEmail" class="control-label">Email</label>
                                      </div>
                                      <div class="col-sm-9">
-                                       <input type="text" class="form-control txtPhoneBookEmail" placeholder="Email">
+                                         <input type="text" class="form-control txtPhoneBookEmail" id="txtPhoneBookEmail" placeholder="Email">
                                      </div>
                                      <div class="col-sm-1">
                                        <a><i class="fa fa-plus-square fa-2x PhoneBookDynamicAdd pointer" mode="Email"></i></a>
@@ -750,13 +717,13 @@
                                 </div>
                                 
                                 
-                                <div>
+                                <div id="PhoneBookFaxGroup">
                                     <div class="form-group">
                                       <div class="col-sm-2">
                                         <label for="txtPhoneBookFax" class="control-label">Fax</label>
                                       </div>
                                       <div class="col-sm-9">
-                                        <input type="text" class="form-control txtPhoneBookFax" placeholder="Fax">
+                                          <input type="text" class="form-control txtPhoneBookFax" id="txtPhoneBookFax" placeholder="Fax">
                                       </div>
                                       <div class="col-sm-1">
                                         <a><i class="fa fa-plus-square fa-2x PhoneBookDynamicAdd pointer"  mode="Fax"></i></a>
@@ -942,8 +909,8 @@
                                         echo "<tr group='{$arrSubGroup["id"]}'>
                                                   <td class='serial'>".($intKey+1)."</td>
                                                   <td>{$arrSubGroup["name"]}</td>
-                                                  <td><a><i class='fa fa-pencil fa-fw pointer editGroup'></i></a></td>
-                                                  <td><a><i class='fa fa-trash fa-fw pointer deleteGroup'></i></a></td>
+                                                  <td><a><i class='fa fa-pencil fa-fw pointer editSubGroup'></i></a></td>
+                                                  <td><a><i class='fa fa-trash fa-fw pointer deleteSubGroup'></i></a></td>
                                                 </tr>";
                                     }
                                 ?>

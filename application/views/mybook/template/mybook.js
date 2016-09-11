@@ -37,6 +37,10 @@ $(function(){
         });
     })
     
+    $("#logout").click(function(){
+        window.location.href = "login/logout"
+    })
+    
     $(".addTabLeftMenu").click(function(){
         if(!$(this).hasClass("active")){
             $("#btnReset"+$(this).attr("option").replace("Add","")).click()
@@ -163,7 +167,7 @@ $(function(){
          $("#AddBookMark").find("textarea").val("")
      })
      
-     $(".goToUrl").click(function(){
+     $(document).on("click", ".goToUrl", function(){
          var strUrl = $(this).attr("url")
          if(strUrl != ""){
              window.open(strUrl, "_blank");
@@ -213,7 +217,7 @@ $(function(){
                  note        : CKEDITOR.instances['txaNote'].getData(),//$.trim($("#txaNote").val()),
              }
          }
-         var strNote = JSON.stringify(objNote);
+         var strNote = encodeURIComponent(JSON.stringify(objNote));
          
          $.ajax({
                 type: "POST",
@@ -346,7 +350,7 @@ $(function(){
          loadNoatInEditMode($(this).attr("note"))
      })
      
-     $(".editNote").click(function(){
+     $(document).on("click", ".editNote", function(){
          loadNoatInEditMode($(this).closest("tr").attr("note"))
      })
      
@@ -378,7 +382,7 @@ $(function(){
             strPlaceholder = "Fax"
         }
         
-        var strToAppend = "<div class='form-group'>\n\
+        var strToAppend = "<div class='form-group PhoneBookDynamicWidget'>\n\
                               <div class='col-sm-2'></div>\n\
                               <div class='col-sm-9'>\n\
                                 <input type='text' class='form-control "+strClass+"' placeholder='"+strPlaceholder+"'>\n\
@@ -393,7 +397,18 @@ $(function(){
     })
     
     $(document).on("click", ".PhoneBookDynamicDelete", function(){
-        $(this).parent().parent().parent().remove()
+        var objThis = $(this)
+        swal({
+          title: 'Are You Sure To Delete This?',
+          text: "",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(function() {
+            objThis.parent().parent().parent().remove()
+        })
     })
     
     $("#btnSavePhoneBook").click(function(){
@@ -541,10 +556,95 @@ $(function(){
     $("#btnResetPhoneBook").click(function(){
         intGlobalPhoneBookId = ""
         $(".AddTabMessage").hide()
+        $(".PhoneBookDynamicWidget").remove()
         $("#AddPhoneBook").find("input:text").val("")
         $("#AddPhoneBook").find("select").val("")
         $("#AddPhoneBook").find("textarea").val("")
     })
+    
+    $(document).on("click", ".showPhoneBook", function(){
+        $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/phoneBook/getphonebookdata",
+                data: "intId="+$(this).closest("tr").attr("phonebook"),
+                async: false,
+                success:  function(objResult){
+                    if(objResult){
+                        $("#pbName").html(objResult.name)
+                        $("#pbGroup").html(objResult.group_name)
+                        $("#pbSubGroup").html(objResult.subgroup_name)
+                        
+                        $(".pbDynamicData").remove()
+                        $.each(objResult.phone, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#pbPhone").html(strValue)
+                            }
+                            else{
+                                var strData = "<div class='row pbDynamicData'>\n\
+                                                <div class='col-sm-2'></div>\n\
+                                                <div class='col-sm-10'>"+strValue+"</div>\n\
+                                              </div>"
+                                $("#pbPhoneGroup").append(strData)
+                            }
+                        })
+                        $.each(objResult.mobile, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#pbMobile").html(strValue)
+                            }
+                            else{
+                                var strData = "<div class='row pbDynamicData'>\n\
+                                                <div class='col-sm-2'></div>\n\
+                                                <div class='col-sm-10'>"+strValue+"</div>\n\
+                                              </div>"
+                                $("#pbMobileGroup").append(strData)
+                            }
+                        })
+                        $.each(objResult.email, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#pbEmail").html(strValue)
+                            }
+                            else{
+                                var strData = "<div class='row pbDynamicData'>\n\
+                                                <div class='col-sm-2'></div>\n\
+                                                <div class='col-sm-10'>"+strValue+"</div>\n\
+                                              </div>"
+                                $("#pbEmailGroup").append(strData)
+                            }
+                        })
+                        $.each(objResult.fax, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#pbFax").html(strValue)
+                            }
+                            else{
+                                var strData = "<div class='row pbDynamicData'>\n\
+                                                <div class='col-sm-2'></div>\n\
+                                                <div class='col-sm-10'>"+strValue+"</div>\n\
+                                              </div>"
+                                $("#pbFaxGroup").append(strData)
+                            }
+                        })
+                        
+                        $("#pbAddress").html(objResult.address)
+                        $("#pbDescription").html(objResult.description)
+                        $("#EditPhoneBook").attr("phonebook", objResult.id)
+                        $("#PhoneBookList").hide()
+                        $("#PhoneBookView").show()
+                    }
+                }
+            });
+     })
+     
+     $("#EditPhoneBook").click(function(){
+         loadPhoneBookInEditMode($(this).attr("phonebook"))
+     })
+     $(document).on("click", ".editPhoneBook", function(){
+         loadPhoneBookInEditMode($(this).closest("tr").attr("phonebook"))
+     })
+     
+     $("#GoToPhoneBookList").click(function(){
+         $("#PhoneBookView").hide()
+         $("#PhoneBookList").show()
+     })
     
     // main category ****************************************************************************
     $(document).on("click", ".editCategory", function(){
@@ -594,6 +694,7 @@ $(function(){
                     async: false,
                     success:  function(objResult){
                         if(objResult == "SUCCESS"){
+                            getGroupAndCategory()
                             objThis.closest("tr").remove()
                             setSerialNo("#addCategoryGrid .serial")
                             setMessage("Category Has Been Deleted", 1)
@@ -647,6 +748,7 @@ $(function(){
             async: false,
             success:  function(objResult){
                 if(objResult == "SUCCESS"){
+                    getGroupAndCategory()
                     setMessage("Category Has Been Saved", 1)
                 }
                 else if(objResult == "DUPLICATE"){
@@ -708,6 +810,7 @@ $(function(){
                     async: false,
                     success:  function(objResult){
                         if(objResult == "SUCCESS"){
+                            getGroupAndCategory()
                             objThis.closest("tr").remove()
                             setSerialNo("#addSubCategoryGrid .serial")
                             setMessage("Sub Category Has Been Deleted", 1)
@@ -761,6 +864,7 @@ $(function(){
             async: false,
             success:  function(objResult){
                 if(objResult == "SUCCESS"){
+                    getGroupAndCategory()
                     setMessage("Sub Category Has Been Saved", 1)
                 }
                 else if(objResult == "DUPLICATE"){
@@ -822,6 +926,7 @@ $(function(){
                     async: false,
                     success:  function(objResult){
                         if(objResult == "SUCCESS"){
+                            getGroupAndCategory()
                             objThis.closest("tr").remove()
                             setSerialNo("#addGroupGrid .serial")
                             setMessage("Group Has Been Deleted", 1)
@@ -875,6 +980,7 @@ $(function(){
             async: false,
             success:  function(objResult){
                 if(objResult == "SUCCESS"){
+                    getGroupAndCategory()
                     setMessage("Group Has Been Saved", 1)
                 }
                 else if(objResult == "DUPLICATE"){
@@ -935,6 +1041,7 @@ $(function(){
                     async: false,
                     success:  function(objResult){
                         if(objResult == "SUCCESS"){
+                            getGroupAndCategory()
                             objThis.closest("tr").remove()
                             setSerialNo("#addSubGroupGrid .serial")
                             setMessage("Sub Group Has Been Deleted", 1)
@@ -988,6 +1095,7 @@ $(function(){
             async: false,
             success:  function(objResult){
                 if(objResult == "SUCCESS"){
+                    getGroupAndCategory()
                     setMessage("Group Has Been Saved", 1)
                 }
                 else if(objResult == "DUPLICATE"){
@@ -1067,4 +1175,193 @@ function loadNoatInEditMode(intNoteId){
                 }
             }
         });
+}
+
+function loadPhoneBookInEditMode(intPhoneBookId){
+    $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/phoneBook/getphonebookdata",
+                data: "intId="+intPhoneBookId,
+                async: false,
+                success:  function(objResult){
+                    if(objResult){
+                        intGlobalPhoneBookId = objResult.id
+                        $("#txtPhoneBookName").val(objResult.name)
+                        $("#cmbPhoneBookGroup").val(objResult.group)
+                        $("#cmbPhoneBookSubGroup").val(objResult.subgroup)
+                        
+                        $(".PhoneBookDynamicWidget").remove()
+                        $.each(objResult.phone, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#txtPhoneBookPhone").val(strValue)
+                            }
+                            else{
+                                var strData = "<div class='form-group PhoneBookDynamicWidget'>\n\
+                                                  <div class='col-sm-2'></div>\n\
+                                                  <div class='col-sm-9'>\n\
+                                                    <input type='text' class='form-control txtPhoneBookPhone' placeholder='Phone' value='"+strValue+"'>\n\
+                                                  </div>\n\
+                                                  <div class='col-sm-1'>\n\
+                                                    <a><i class='fa fa-trash fa-2x PhoneBookDynamicDelete pointer'></i></a>\n\
+                                                  </div>\n\
+                                                </div>"
+                                $("#PhoneBookPhoneGroup").append(strData)
+                            }
+                        })
+                        $.each(objResult.mobile, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#txtPhoneBookMobile").val(strValue)
+                            }
+                            else{
+                                var strData = "<div class='form-group PhoneBookDynamicWidget'>\n\
+                                                  <div class='col-sm-2'></div>\n\
+                                                  <div class='col-sm-9'>\n\
+                                                    <input type='text' class='form-control txtPhoneBookMobile' placeholder='Mobile' value='"+strValue+"'>\n\
+                                                  </div>\n\
+                                                  <div class='col-sm-1'>\n\
+                                                    <a><i class='fa fa-trash fa-2x PhoneBookDynamicDelete pointer'></i></a>\n\
+                                                  </div>\n\
+                                                </div>"
+                                $("#PhoneBookMobileGroup").append(strData)
+                            }
+                        })
+                        $.each(objResult.email, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#txtPhoneBookEmail").val(strValue)
+                            }
+                            else{
+                                var strData = "<div class='form-group PhoneBookDynamicWidget'>\n\
+                                                  <div class='col-sm-2'></div>\n\
+                                                  <div class='col-sm-9'>\n\
+                                                    <input type='text' class='form-control txtPhoneBookEmail' placeholder='Email' value='"+strValue+"'>\n\
+                                                  </div>\n\
+                                                  <div class='col-sm-1'>\n\
+                                                    <a><i class='fa fa-trash fa-2x PhoneBookDynamicDelete pointer'></i></a>\n\
+                                                  </div>\n\
+                                                </div>"
+                                $("#PhoneBookEmailGroup").append(strData)
+                            }
+                        })
+                        $.each(objResult.fax, function(intKey, strValue){
+                            if(intKey == 0){
+                                $("#txtPhoneBookFax").val(strValue)
+                            }
+                            else{
+                                var strData = "<div class='form-group PhoneBookDynamicWidget'>\n\
+                                                  <div class='col-sm-2'></div>\n\
+                                                  <div class='col-sm-9'>\n\
+                                                    <input type='text' class='form-control txtPhoneBookFax' placeholder='Fax' value='"+strValue+"'>\n\
+                                                  </div>\n\
+                                                  <div class='col-sm-1'>\n\
+                                                    <a><i class='fa fa-trash fa-2x PhoneBookDynamicDelete pointer'></i></a>\n\
+                                                  </div>\n\
+                                                </div>"
+                                $("#PhoneBookFaxGroup").append(strData)
+                            }
+                        })
+                        
+                        $("#txaPhoneBookAddress").val(objResult.address)
+                        $("#txaPhoneBookDescription").val(objResult.description)
+                        $("#GoToPhoneBookList").click()
+                        setUpdateMode("AddPhoneBook")
+                    }
+                }
+            });
+}
+
+function getGroupAndCategory(){
+    $.ajax({
+                type: "POST",
+                url: strBaseUrl+"/mybook/mybook/getgroupandcategory",
+                async: false,
+                success:  function(objResult){
+                    if(objResult.arrCategories){
+                        $("#addCategoryGrid").html("")
+                        $.each(objResult.arrCategories, function(intKey, objValue){
+                            $("#addCategoryGrid").append("<tr category='"+objValue.id+"'>\n\
+                                              <td class='serial'>"+(intKey+1)+"</td>\n\
+                                              <td>"+objValue.name+"</td>\n\
+                                              <td><a><i class='fa fa-pencil fa-fw pointer editCategory'></i></a></td>\n\
+                                              <td><a><i class='fa fa-trash fa-fw pointer deleteCategory'></i></a></td>\n\
+                                            </tr>")
+                        })
+                            
+                        $(".cmbCategory").each(function(){
+                            var intSelected = $(this).val()
+                            $(this).find('option').not(':first').remove();
+                            var objThis = $(this)
+                            $.each(objResult.arrCategories, function(intKey, objValue){
+                                objThis.append("<option value='"+objValue.id+"'>"+objValue.name+"</option>")
+                            })
+                            objThis.val(intSelected)
+                        })
+                    }
+                    
+                    if(objResult.arrSubCategories){
+                        $("#addSubCategoryGrid").html("")
+                        $.each(objResult.arrCategories, function(intKey, objValue){
+                            $("#addSubCategoryGrid").append("<tr category='"+objValue.id+"'>\n\
+                                              <td class='serial'>"+(intKey+1)+"</td>\n\
+                                              <td>"+objValue.name+"</td>\n\
+                                              <td><a><i class='fa fa-pencil fa-fw pointer editSubCategory'></i></a></td>\n\
+                                              <td><a><i class='fa fa-trash fa-fw pointer deleteSubCategory'></i></a></td>\n\
+                                            </tr>")
+                        })
+                        
+                        $(".cmbSubCategory").each(function(){
+                            var intSelected = $(this).val()
+                            $(this).find('option').not(':first').remove();
+                            var objThis = $(this)
+                            $.each(objResult.arrSubCategories, function(intKey, objValue){
+                                objThis.append("<option value='"+objValue.id+"'>"+objValue.name+"</option>")
+                            })
+                            objThis.val(intSelected)
+                        })
+                    }
+                    
+                    if(objResult.arrGroups){
+                        $("#addGroupGrid").html("")
+                        $.each(objResult.arrCategories, function(intKey, objValue){
+                            $("#addGroupGrid").append("<tr group='"+objValue.id+"'>\n\
+                                              <td class='serial'>"+(intKey+1)+"</td>\n\
+                                              <td>"+objValue.name+"</td>\n\
+                                              <td><a><i class='fa fa-pencil fa-fw pointer editGroup'></i></a></td>\n\
+                                              <td><a><i class='fa fa-trash fa-fw pointer deleteGroup'></i></a></td>\n\
+                                            </tr>")
+                        })
+                        
+                        $(".cmbGroup").each(function(){
+                            var intSelected = $(this).val()
+                            $(this).find('option').not(':first').remove();
+                            var objThis = $(this)
+                            $.each(objResult.arrGroups, function(intKey, objValue){
+                                objThis.append("<option value='"+objValue.id+"'>"+objValue.name+"</option>")
+                            })
+                            objThis.val(intSelected)
+                        })
+                    }
+                    
+                    if(objResult.arrSubGroups){
+                        $("#addSubGroupGrid").html("")
+                        $.each(objResult.arrCategories, function(intKey, objValue){
+                            $("#addSubGroupGrid").append("<tr group='"+objValue.id+"'>\n\
+                                              <td class='serial'>"+(intKey+1)+"</td>\n\
+                                              <td>"+objValue.name+"</td>\n\
+                                              <td><a><i class='fa fa-pencil fa-fw pointer editSubGroup'></i></a></td>\n\
+                                              <td><a><i class='fa fa-trash fa-fw pointer deleteSubGroup'></i></a></td>\n\
+                                            </tr>")
+                        })
+                        
+                        $(".cmbSubGroup").each(function(){
+                            var intSelected = $(this).val()
+                            $(this).find('option').not(':first').remove();
+                            var objThis = $(this)
+                            $.each(objResult.arrSubGroups, function(intKey, objValue){
+                                objThis.append("<option value='"+objValue.id+"'>"+objValue.name+"</option>")
+                            })
+                            objThis.val(intSelected)
+                        })
+                    }
+                }
+            });
 }

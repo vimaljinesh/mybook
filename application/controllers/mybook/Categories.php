@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Categories extends CI_Controller {
     
+    function __construct(){
+       parent::__construct();
+       $this->loginlib->isLogedIn();
+    }
+    
     public function saveCategory(){
         $this->load->library("mybook/CategoriesLib");
         $objCategory = json_decode($this->input->post('strCategory'));

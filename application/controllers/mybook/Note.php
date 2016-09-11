@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Note extends CI_Controller {
     
+    function __construct(){
+       parent::__construct();
+       $this->loginlib->isLogedIn();
+    }
+    
     public function saveNote(){
         $this->load->library("mybook/NoteLib");
         $objNote = json_decode($this->input->post('strNote'));

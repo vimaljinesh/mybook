@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Bookmark extends CI_Controller {
     
+    function __construct(){
+       parent::__construct();
+       $this->loginlib->isLogedIn();
+    }
+    
     public function saveBookmark(){
         $this->load->library("mybook/BookmarkLib");
         $objBookmark = json_decode($this->input->post('strBookmark'));

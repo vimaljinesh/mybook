@@ -127,6 +127,63 @@ class PhoneBookLib{
         $strMessage = "SUCCESS";
         return $strMessage;
     }
+    
+    public function getPhoneBookData($intPhoneBookId){
+        $this->objCi->load->database();
+        $strQuery = "select pm.*, g.vchr_name as `group`, sg.vchr_name as subgroup
+                     from phone_book_master pm 
+                     left join groups g
+                     on g.pk_group_id = pm.fk_group_id
+                     left join groups sg
+                     on sg.pk_group_id = pm.fk_sub_group_id
+                     where pm.bln_deleted is null and pm.pk_phone_book_master_id = $intPhoneBookId 
+                     order by vchr_name";
+        $objResult = $this->objCi->db->query($strQuery)->row();
+        
+        $arrPhoneBook = array(
+                "id" => $objResult->pk_phone_book_master_id?$objResult->pk_phone_book_master_id:"",
+                "name" => $objResult->vchr_name?$objResult->vchr_name:"",
+                "group" => $objResult->fk_group_id?$objResult->fk_group_id:"",
+                "group_name" => $objResult->group?$objResult->group:"",
+                "subgroup" => $objResult->fk_sub_group_id?$objResult->fk_sub_group_id:"",
+                "subgroup_name" => $objResult->subgroup?$objResult->subgroup:"",
+                "phone" => "",
+                "mobile" => "",
+                "email" => "",
+                "fax" => "",
+                "address" => $objResult->vchr_address?$objResult->vchr_address:"",
+                "description" => $objResult->vchr_description?$objResult->vchr_description:"",
+            );
+        
+        $strQuery = "select a.* from phone_book_sub a 
+                    where a.bln_deleted is null 
+                    and a.fk_phone_book_master_id = $intPhoneBookId
+                    order by pk_phone_book_sub";
+        $objResult = $this->objCi->db->query($strQuery);
+        
+        $arrPhoneBookData = array();
+        foreach ($objResult->result() as $objRow){
+            if($objRow->vchr_type == "phone"){
+                $arrPhoneBookData["phone"][] = $objRow->vchr_value;
+            }
+            if($objRow->vchr_type == "mobile"){
+                $arrPhoneBookData["mobile"][] = $objRow->vchr_value;
+            }
+            if($objRow->vchr_type == "email"){
+                $arrPhoneBookData["email"][] = $objRow->vchr_value;
+            }
+            if($objRow->vchr_type == "fax"){
+                $arrPhoneBookData["fax"][] = $objRow->vchr_value;
+            }
+        }
+        
+        $arrPhoneBook["phone"] = isset($arrPhoneBookData["phone"])?$arrPhoneBookData["phone"]:array("");
+        $arrPhoneBook["mobile"] = isset($arrPhoneBookData["mobile"])?$arrPhoneBookData["mobile"]:array("");
+        $arrPhoneBook["email"] = isset($arrPhoneBookData["email"])?$arrPhoneBookData["email"]:array("");
+        $arrPhoneBook["fax"] = isset($arrPhoneBookData["fax"])?$arrPhoneBookData["fax"]:array("");
+        
+        return $arrPhoneBook;
+    }
 }
 ?>
 

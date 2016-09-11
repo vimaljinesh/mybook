@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Mybook extends CI_Controller {
     
+    function __construct(){
+       parent::__construct();
+       $this->loginlib->isLogedIn();
+    }
+    
     public function index(){
         $this->load->helper('url');
         $this->load->library("mybook/CategoriesLib");
@@ -33,6 +38,25 @@ class Mybook extends CI_Controller {
             
             "arrBaseUrl" => site_url(),
         ));
+    }
+    
+    public function getGroupAndCategory(){
+        $this->load->library("mybook/CategoriesLib");
+        $this->load->library("mybook/GroupLib");
+        
+        $arrCategories = $this->categorieslib->getCategory();
+        $arrSubCategories = $this->categorieslib->getCategory("S");
+        $arrGroups = $this->grouplib->getGroup();
+        $arrSubGroups = $this->grouplib->getGroup("S");
+        
+        $arrResult = array(
+            "arrCategories" => $arrCategories,
+            "arrSubCategories" => $arrSubCategories,
+            "arrGroups" => $arrGroups,
+            "arrSubGroups" => $arrSubGroups
+        );
+        
+        $this->commonlib->sendJson($arrResult);
     }
 }
 ?>
