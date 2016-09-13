@@ -1299,7 +1299,7 @@ function getGroupAndCategory(){
                     
                     if(objResult.arrSubCategories){
                         $("#addSubCategoryGrid").html("")
-                        $.each(objResult.arrCategories, function(intKey, objValue){
+                        $.each(objResult.arrSubCategories, function(intKey, objValue){
                             $("#addSubCategoryGrid").append("<tr category='"+objValue.id+"'>\n\
                                               <td class='serial'>"+(intKey+1)+"</td>\n\
                                               <td>"+objValue.name+"</td>\n\
@@ -1321,7 +1321,7 @@ function getGroupAndCategory(){
                     
                     if(objResult.arrGroups){
                         $("#addGroupGrid").html("")
-                        $.each(objResult.arrCategories, function(intKey, objValue){
+                        $.each(objResult.arrGroups, function(intKey, objValue){
                             $("#addGroupGrid").append("<tr group='"+objValue.id+"'>\n\
                                               <td class='serial'>"+(intKey+1)+"</td>\n\
                                               <td>"+objValue.name+"</td>\n\
@@ -1343,7 +1343,7 @@ function getGroupAndCategory(){
                     
                     if(objResult.arrSubGroups){
                         $("#addSubGroupGrid").html("")
-                        $.each(objResult.arrCategories, function(intKey, objValue){
+                        $.each(objResult.arrSubGroups, function(intKey, objValue){
                             $("#addSubGroupGrid").append("<tr group='"+objValue.id+"'>\n\
                                               <td class='serial'>"+(intKey+1)+"</td>\n\
                                               <td>"+objValue.name+"</td>\n\
